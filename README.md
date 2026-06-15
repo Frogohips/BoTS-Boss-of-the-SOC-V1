@@ -4,16 +4,13 @@
 
 ---
 
-So I've been working through the Boss of the SOC v1 (BOTSv1) challenge, which is a Splunk-based CTF designed to simulate a real SOC analyst investigating a cyberattack. I'm still very much a beginner with Splunk, and I'll be honest — there were quite a few moments where I stared at the interface not really knowing what I was doing. But that's kind of the point, I think. This writeup is my attempt to document what I did, where I got confused, and how I eventually figured things out.
+So I've been working through the Boss of the SOC v1 (BOTSv1) challenge, which is a Splunk-based CTF designed to simulate a real SOC analyst investigating a cyberattack. I'm still very much a beginner with Splunk, and I'll be honest, there were quite a few moments where I stared at the interface not really knowing what I was doing. But that's kind of the point, I think. This writeup is my attempt to document what I did, where I got confused, and how I eventually figured things out.
 
 ---
 
 ## What is BOTSv1?
 
-BOTSv1 is a Capture The Flag challenge built around a fictional company that has been attacked. You're given access to a Splunk instance loaded with real log data from the incident, and your job is to answer questions by digging through that data. The attack involves a web defacement, a brute force login, a malware upload, and eventually ransomware. It escalates quickly.
-
-The data sources include HTTP stream logs, Sysmon (Windows event logs), Suricata IDS alerts, DNS logs, SMB data, and Windows Registry events. As a beginner, I had to figure out what all of these even were as I went.
-
+BOTSv1 is a Capture The Flag challenge built around a company that has been attacked. You're given access to a Splunk instance loaded with real log data from the incident, and your job is to answer questions by digging through that data. The attack involves a web defacement, a brute force login, a malware upload, and eventually ransomware. It escalates quickly.
 ---
 
 ## Level 1: Finding Attack Servers

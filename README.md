@@ -1,4 +1,4 @@
- Boss of the SOC v1 — My Walkthrough
+# Boss of the SOC v1 — My Walkthrough
 
 **Based on the samsclass BOTSv1 challenge | [https://samsclass.info/50/proj/botsv1.htm](https://samsclass.info/50/proj/botsv1.htm)**
 
@@ -27,7 +27,7 @@ This was a good introductory question because it got me comfortable with looking
 I initially wasn't sure *which* field to look in. I spent a while on `src_ip` before realising I needed to actually inspect the raw event content and look at headers. Lesson learned: always look at the full event, not just the summary fields.
 
 ![1.1](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/1.1.png?raw=true)
-![1.1(2)](BoTS-Boss-of-the-SOC-V1/SC/1.1(2).png)
+![1.1(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/1.1(2).png?raw=true)
 
 ---
 
@@ -39,8 +39,8 @@ I pulled up the `src_ip` field from `stream:http` events and looked at the distr
 
 This was my first real experience using Splunk's field value distribution to identify anomalies. Seeing one IP dominate so heavily was a bit of an "oh, *that's* how you spot something suspicious" moment.
 
-![1.2](BoTS-Boss-of-the-SOC-V1-/SC/1.2.png)
-![1.2(2)](BoTS-Boss-of-the-SOC-V1-/SC/1.2(2).png)
+![1.2](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/1.2.png?raw=true)
+![1.2(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/1.2(2).png?raw=true)
 
 ---
 
@@ -52,8 +52,8 @@ I filtered for events going to `imreallynotbatman.com` and looked at the `dest_i
 
 The `192.168.x.x` range is a private IP, which makes sense for an internal web server. This was a good reminder that real environments mix internal and external IPs in the logs.
 
-![1.3](BoTS-Boss-of-the-SOC-V1-/SC/1.3.png)
-![1.3(2)](BoTS-Boss-of-the-SOC-V1-/SC/1.3(2).png)
+![1.3](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/1.3.png?raw=true)
+![1.3(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/1.3(2).png?raw=true)
 
 ---
 
@@ -74,8 +74,8 @@ This gave me 9 events where the web server was reaching *out* to an external IP 
 
 I'll be honest — I initially had this backwards. I was searching for traffic *to* the web server, not traffic *from* it. It took me a while to realise the defacement file had to be *pulled* by the web server from somewhere external, meaning the web server was the source. Once I flipped the src/dest in my head, it clicked.
 
-![1.4&5](BoTS-Boss-of-the-SOC-V1-/SC/1.4&5.png)
-![1.4(2)](BoTS-Boss-of-the-SOC-V1-/SC/1.4(2).png)
+![1.4&5](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/1.4&5.png?raw=true)
+![1.4(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/1.4(2).png?raw=true)
 
 ---
 
@@ -93,8 +93,8 @@ index="botsv1" prankglassinebracket.jumpingcrab.com source="stream:http" http_me
 
 The `dest_ip` field on those events pointed straight to `23.22.63.114`. This is the external IP the attacker controlled.
 
-![2.1](BoTS-Boss-of-the-SOC-V1-/SC/2.1.png)
-![2.1(2)](BoTS-Boss-of-the-SOC-V1-/SC/2.1(2).png)
+![2.1](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/2.1.png?raw=true)
+![2.1(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/2.1(2).png?raw=true)
 
 ---
 
@@ -108,7 +108,7 @@ Several domains came up, and one of them was written in Leetspeak — where lett
 
 This was my first time using threat intelligence lookups alongside Splunk data, and it was actually really satisfying — using one answer to pivot into the next investigation step.
 
-![2.2](BoTS-Boss-of-the-SOC-V1-/SC/2.2.png)
+![2.2](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/2.2.png?raw=true)
 
 ---
 
@@ -128,8 +128,8 @@ index="botsv1" imreallynotbatman.com source="stream:http" http_method=POST
 
 That gave me 441 events, all from the same IP. POST requests to a login page in high volume = brute force. The `form_data` field even showed the username and password being tried each time.
 
-![2.3](BoTS-Boss-of-the-SOC-V1-/SC/2.3.png)
-![2.3(2)](BoTS-Boss-of-the-SOC-V1-/SC/2.3(2).png)
+![2.3](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/2.3.png?raw=true)
+![2.3(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/2.3(2).png?raw=true)
 
 ---
 
@@ -141,8 +141,8 @@ I filtered the same POST traffic for `.exe` in the data content. The `data_conte
 
 This took me a while to find because I wasn't sure what field the file upload data would appear in. I ended up looking at several fields before spotting it in `data_content`. The fact that it's a `.exe` sitting in a Joomla directory is pretty alarming when you see it.
 
-![2.4](BoTS-Boss-of-the-SOC-V1-/SC/2.4.png)
-![2.4(2)](BoTS-Boss-of-the-SOC-V1-/SC/2.4(2).png)
+![2.4](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/2.4.png?raw=true)
+![2.4(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/2.4(2).png?raw=true)
 
 ---
 
@@ -162,8 +162,8 @@ index="botsv1" EventID=1 Image="*3791.exe"
 
 The MD5 hash appeared right in the event data. This hash can then be looked up in VirusTotal to confirm it's malicious.
 
-![3.1](BoTS-Boss-of-the-SOC-V1-/SC/3.1.png)
-![3.1(2)](BoTS-Boss-of-the-SOC-V1-/SC/3.1(2).png)
+![3.1](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/3.1.png?raw=true)
+![3.1(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/3.1(2).png?raw=true)
 
 ---
 
@@ -175,8 +175,8 @@ I searched for login events targeting the Joomla administrator page and sorted b
 
 It felt strangely satisfying to literally see the attacker's wordlist being worked through one attempt at a time.
 
-![3.2](BoTS-Boss-of-the-SOC-V1-/SC/3.2.png)
-![3.2(2)](BoTS-Boss-of-the-SOC-V1-/SC/3.2(2).png)
+![3.2](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/3.2.png?raw=true)
+![3.2(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/3.2(2).png?raw=true)
 
 ---
 
@@ -188,7 +188,7 @@ This was more interesting than it sounds. The brute force was done using `Python
 
 I filtered for events with `batman` in the `form_data` field. The event where the response indicated a successful login — rather than a redirect back to the login page — confirmed this was the correct password. Batman's password is "batman." I suppose that tracks.
 
-![3.3](BoTS-Boss-of-the-SOC-V1-/SC/3.3.png)
+![3.3](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/3.3.png?raw=true)
 
 ---
 
@@ -198,8 +198,8 @@ I filtered for events with `batman` in the `form_data` field. The event where th
 
 I found the two events containing the correct password — one from the Python brute-forcer, one from a real browser — and calculated the time difference using their timestamps. The attacker had the password, then took about a minute and a half to sit down and manually log in. A very human pause.
 
-![3.4](BoTS-Boss-of-the-SOC-V1-/SC/3.4.png)
-![3.4(2)](BoTS-Boss-of-the-SOC-V1-/SC/3.4(2).png)
+![3.4](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/3.4.png?raw=true)
+![3.4(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/3.4(2).png?raw=true)
 
 ---
 
@@ -209,7 +209,7 @@ I found the two events containing the correct password — one from the Python b
 
 I filtered to only the Python-urllib user agent (the brute-force tool), pulled out all the `passwd=` values from the `form_data` field, and counted the unique ones. 412 attempts before landing on "batman."
 
-![3.5](BoTS-Boss-of-the-SOC-V1-/SC/3.5.png)
+![3.5](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/3.5.png?raw=true)
 
 ---
 
@@ -227,7 +227,7 @@ I searched for `we8105desk` in stream sources using Active Directory authenticat
 
 Learning to filter by date in Splunk (`earliest=` and `latest=`) was something I had to look up. The time picker in the UI is helpful but I kept forgetting to set it.
 
-![4.1](BoTS-Boss-of-the-SOC-V1-/SC/4.1.png)
+![4.1](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.1.png?raw=true)
 
 ---
 
@@ -237,8 +237,8 @@ Learning to filter by date in Splunk (`earliest=` and `latest=`) was something I
 
 I searched Suricata events for "Cerber" and looked at the alert signatures. A few fired, and the one with the fewest hits was `2816763`. Suricata is an IDS (Intrusion Detection System), and its alerts are labelled with signature IDs that map to known threat patterns.
 
-![4.2](BoTS-Boss-of-the-SOC-V1-/SC/4.2.png)
-![4.2(2)](BoTS-Boss-of-the-SOC-V1-/SC/4.2(2).png)
+![4.2](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.2.png?raw=true)
+![4.2(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.2(2).png?raw=true)
 
 ---
 
@@ -250,8 +250,8 @@ This involved cross-referencing two data sources. Suricata had events with "Onio
 
 This was one of the harder questions. Getting the timing correlation right between Suricata and DNS events required a bit of trial and error with the time windows.
 
-![4.3](BoTS-Boss-of-the-SOC-V1-/SC/4.3.png)
-![4.3(2)](BoTS-Boss-of-the-SOC-V1-/SC/4.3(2).png)
+![4.3](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.3.png?raw=true)
+![4.3(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.3(2).png?raw=true)
 
 ---
 
@@ -261,8 +261,8 @@ This was one of the harder questions. Getting the timing correlation right betwe
 
 I looked at the 86,579 Suricata events on 24 August from Bob's workstation. Filtering to HTTP and DNS event types and examining the top ten hostnames visited, one domain stood out as clearly not a legitimate service. External research confirmed it as a known malware distribution site — this is where the initial infection likely started.
 
-![4.4](BoTS-Boss-of-the-SOC-V1-/SC/4.4.png)
-![4.4(2)](BoTS-Boss-of-the-SOC-V1-/SC/4.4(2).png)
+![4.4](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.4.png?raw=true)
+![4.4(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.4(2).png?raw=true)
 
 ---
 
@@ -274,8 +274,8 @@ I searched for events where both a `.vbs` and a `.exe` extension appeared togeth
 
 I had no idea what to look for here at first. The hint about searching for `.vbs` and `.exe` together made more sense once I understood that the script was likely a dropper that called another executable.
 
-![4.5](BoTS-Boss-of-the-SOC-V1-/SC/4.5.png)
-![4.5(2)](BoTS-Boss-of-the-SOC-V1-/SC/4.5(2).png)
+![4.5](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.5.png?raw=true)
+![4.5(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.5(2).png?raw=true)
 
 ---
 
@@ -285,8 +285,8 @@ I had no idea what to look for here at first. The hint about searching for `.vbs
 
 The VB script field appeared in three events. The longest version — which was HTML-encoded, meaning ampersands and other characters were expanded into their entity forms (e.g., `&amp;`) — came in at 5861 characters. The encoding artificially inflates the length, which is worth noting.
 
-![4.6](BoTS-Boss-of-the-SOC-V1-/SC/4.6.png)
-![4.6(2)](BoTS-Boss-of-the-SOC-V1-/SC/4.6(2).png)
+![4.6](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.6.png?raw=true)
+![4.6(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.6(2).png?raw=true)
 
 ---
 
@@ -298,7 +298,7 @@ I searched the `WinRegistry` source type for events containing `FriendlyName`. W
 
 I thought this was a clever question — it made me realise just how much information Windows logs about connected devices, which is obviously useful for forensics.
 
-![4.7](BoTS-Boss-of-the-SOC-V1-/SC/4.7.png)
+![4.7](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.7.png?raw=true)
 
 ---
 
@@ -311,8 +311,8 @@ I examined SMB stream data during the ransomware outbreak for Bob's workstation.
 
 To find the IP, I searched for that hostname in raw network stream sources and found the associated IP address, `192.168.250.20`.
 
-![4.8&9](BoTS-Boss-of-the-SOC-V1-/SC/4.8&9.png)
-![4.8&9(2)](BoTS-Boss-of-the-SOC-V1-/SC/4.8&9(2).png)
+![4.8&9](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.8&9.png?raw=true)
+![4.8&9(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.8&9(2).png?raw=true)
 
 ---
 
@@ -324,7 +324,7 @@ I searched for `.pdf` in SMB stream events, restricted to the `unknown` app cate
 
 This question made the impact of the ransomware feel concrete. 257 files on just one server, in addition to everything on the local machine. Real damage.
 
-![4.10](BoTS-Boss-of-the-SOC-V1-/SC/4.10.png)
+![4.10](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.10.png?raw=true)
 
 ---
 
@@ -334,7 +334,7 @@ This question made the impact of the ransomware feel concrete. 257 files on just
 
 Searching for `121214.tmp` returned 190 events. Focusing on Sysmon Event ID 1 (Process Creation), the `CommandLine` and `ParentProcessId` fields identified that the temporary file was launched by process ID 3968.
 
-![4.11](BoTS-Boss-of-the-SOC-V1-/SC/4.11.png)
+![4.11](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.11.png?raw=true)
 
 ---
 
@@ -346,7 +346,7 @@ I filtered events containing `.txt` to Bob's Windows user profile path. The tric
 
 This was a syntax issue that tripped me up for a bit. Splunk uses backslash as an escape character, so you need to double them up when searching Windows paths.
 
-![4.12](BoTS-Boss-of-the-SOC-V1-/SC/4.12.png)
+![4.12](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.12.png?raw=true)
 
 ---
 
@@ -356,8 +356,8 @@ This was a syntax issue that tripped me up for a bit. Splunk uses backslash as a
 
 I searched for HTTP download events from `solidaritedeproximite.org` — the suspicious domain from question 4.4. One event showed a file being downloaded with a `.jpg` extension, which is unusual for something being executed. External research confirmed that this was the Cerber ransomware cryptor.
 
-![4.13](BoTS-Boss-of-the-SOC-V1-/SC/4.13.png)
-![4.13(2)](BoTS-Boss-of-the-SOC-V1-/SC/4.13(2).png)
+![4.13](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.13.png?raw=true)
+![4.13(2)](https://github.com/Frogohips/BoTS-Boss-of-the-SOC-V1/blob/main/SC/4.13(2).png?raw=true)
 
 ---
 
@@ -383,4 +383,4 @@ BOTSv1 was genuinely challenging, especially in the later levels. Some things I 
 
 **Syntax trips you up constantly.** Double backslashes for Windows paths, time range syntax, wildcard placement — these small things caused me more delays than the actual logic of the problems.
 
-Overall, I'd recommend BOTSv1 to anyone learning Splunk. It's frustrating in the right ways.
+Overall, I'd recommend BOTSv1 to anyone learning Splunk. It's frustrating in the right ways

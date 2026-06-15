@@ -26,8 +26,8 @@ This was a good introductory question because it got me comfortable with looking
 
 I initially wasn't sure *which* field to look in. I spent a while on `src_ip` before realising I needed to actually inspect the raw event content and look at headers. Lesson learned: always look at the full event, not just the summary fields.
 
-![1.1](BoTS-Boss-of-the-SOC-V1-/SC/1.1.png)
-![1.1(2)](BoTS-Boss-of-the-SOC-V1-/SC/1.1(2).png)
+![1.1](BoTS-Boss-of-the-SOC-V1/SC/1.1.png)
+![1.1(2)](BoTS-Boss-of-the-SOC-V1/SC/1.1(2).png)
 
 ---
 
